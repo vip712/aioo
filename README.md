@@ -1,2 +1,2 @@
-# aioo.github.io
+# aioo
 aioo.duckdns.org
