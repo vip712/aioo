@@ -1,12 +1,544 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>Aiee Site</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aioo Crypto Hub | 加密貨幣工具箱・空投・推薦返佣</title>
+<meta name="description" content="Aioo Crypto Hub：免費加密貨幣工具箱（幣價換算、手續費查詢、投資組合追蹤、挖礦收益估算、錢包二維碼）、空投機會整理、交易所推薦返佣連結。Free crypto toolbox, airdrop list and exchange referral links.">
+<meta name="keywords" content="加密貨幣,crypto,工具箱,空投,airdrop,交易所返佣,referral,比特幣,Bitcoin,打賞,donate">
+<meta property="og:title" content="Aioo Crypto Hub | 加密貨幣工具箱">
+<meta property="og:description" content="免費加密貨幣工具箱・空投機會・交易所推薦返佣・打賞支持。Free crypto tools, airdrops and referrals.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vip712.github.io/aioo/">
+<style>
+:root{
+  --bg:#0b0e14; --card:#141a26; --card2:#1a2233; --border:#263049;
+  --text:#e9edf5; --muted:#98a2b8; --accent:#f0b90b; --green:#2ebd85; --red:#e5484d; --blue:#4da3ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.6}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1rem;padding:.7rem 1rem;background:rgba(11,14,20,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+.brand{font-weight:800;font-size:1.05rem;white-space:nowrap}
+.brand span{color:var(--accent)}
+.topbar nav{display:flex;gap:1rem;margin-left:auto;flex-wrap:wrap}
+.topbar nav a{color:var(--muted);font-size:.9rem}
+.topbar nav a:hover{color:var(--text)}
+.lang-toggle{display:flex;border:1px solid var(--border);border-radius:999px;overflow:hidden;flex-shrink:0}
+.lang-toggle button{background:transparent;border:0;color:var(--muted);padding:.35rem .8rem;font-size:.85rem;cursor:pointer}
+.lang-toggle button.active{background:var(--accent);color:#111;font-weight:700}
+main{max-width:1080px;margin:0 auto;padding:0 1rem 3rem}
+.hero{text-align:center;padding:3rem 1rem 2rem}
+.hero h1{font-size:2rem;margin-bottom:.6rem}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--muted);max-width:640px;margin:0 auto 1.2rem}
+.btn{display:inline-block;background:var(--accent);color:#111;font-weight:700;border:0;border-radius:10px;padding:.65rem 1.3rem;cursor:pointer;font-size:.95rem}
+.btn:hover{filter:brightness(1.08);text-decoration:none}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn.small{padding:.4rem .9rem;font-size:.85rem}
+.hero .cta-row{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+section{margin-top:2.5rem}
+section h2{font-size:1.35rem;margin-bottom:.4rem;border-left:4px solid var(--accent);padding-left:.6rem}
+.sec-desc{color:var(--muted);font-size:.92rem;margin-bottom:1rem}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem}
+.card h3{font-size:1.05rem;margin-bottom:.4rem}
+.card p{font-size:.9rem;color:var(--muted)}
+.price{font-size:1.35rem;font-weight:800}
+.up{color:var(--green)} .down{color:var(--red)}
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.tab-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:999px;padding:.45rem 1rem;cursor:pointer;font-size:.9rem}
+.tab-btn.active{background:var(--accent);color:#111;font-weight:700;border-color:var(--accent)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.field{margin-bottom:.9rem}
+.field label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:.3rem}
+.field input,.field select{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:.6rem .8rem;font-size:1rem}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+@media(max-width:560px){.row2{grid-template-columns:1fr}.topbar nav{display:none}}
+.result{background:var(--card2);border:1px dashed var(--border);border-radius:10px;padding:.9rem;margin-top:.8rem;font-size:1.05rem}
+.result b{color:var(--accent)}
+.muted{color:var(--muted);font-size:.85rem}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:.55rem .4rem;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:600;font-size:.82rem}
+.warn{background:#2a1a12;border:1px solid #7a4a1e;border-radius:12px;padding:1rem;margin-bottom:1rem;font-size:.9rem}
+.warn b{color:var(--accent)}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;border-radius:999px;padding:.15rem .6rem;margin-bottom:.5rem}
+.badge.live{background:rgba(46,189,133,.15);color:var(--green);border:1px solid var(--green)}
+.badge.demo{background:rgba(77,163,255,.12);color:var(--blue);border:1px solid var(--blue)}
+.ref-code{display:flex;align-items:center;gap:.6rem;background:var(--card2);border:1px dashed var(--border);border-radius:10px;padding:.55rem .8rem;margin:.7rem 0;font-family:ui-monospace,monospace}
+.ref-code code{flex:1;overflow:hidden;text-overflow:ellipsis;color:var(--accent);font-size:1rem}
+.copy-btn{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:.3rem .7rem;cursor:pointer;font-size:.82rem}
+.copy-btn:hover{border-color:var(--accent)}
+.qr-box{display:flex;justify-content:center;padding:1rem;background:#fff;border-radius:12px;margin-top:.8rem;min-height:120px;align-items:center;color:#666}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem 1rem 2rem;color:var(--muted);font-size:.82rem;max-width:1080px;margin-left:auto;margin-right:auto}
+footer p{margin-bottom:.5rem}
+.addr{font-family:ui-monospace,monospace;font-size:.8rem;word-break:break-all;color:var(--muted);background:var(--card2);border-radius:8px;padding:.5rem .7rem;margin:.5rem 0}
+.fng-meter{height:10px;border-radius:999px;background:linear-gradient(90deg,#e5484d,#f0b90b,#2ebd85);margin:.6rem 0;position:relative}
+.fng-marker{position:absolute;top:-4px;width:4px;height:18px;background:#fff;border-radius:2px;transform:translateX(-50%)}
+</style>
 </head>
 <body>
-  <h1>Welcome to Aioo website</h1>
-  <h2>Hello world</h2>
+<header class="topbar">
+  <div class="brand">Aioo <span>Crypto Hub</span></div>
+  <nav>
+    <a href="#tools" data-i18n="nav_tools">工具箱</a>
+    <a href="#airdrops" data-i18n="nav_airdrops">空投機會</a>
+    <a href="#referrals" data-i18n="nav_referrals">推薦返佣</a>
+    <a href="#donate" data-i18n="nav_donate">打賞</a>
+  </nav>
+  <div class="lang-toggle" role="group" aria-label="language">
+    <button data-lang="zh-Hant" class="active">繁中</button>
+    <button data-lang="en">EN</button>
+  </div>
+</header>
+<main>
+  <div class="hero">
+    <h1>Aioo <span>Crypto Hub</span></h1>
+    <p data-i18n="hero_desc">免費加密貨幣工具箱：即時行情、幣價換算、手續費查詢、投資組合追蹤、挖礦收益估算、錢包二維碼產生器，外加空投機會整理與交易所推薦返佣。純前端運作，不收集任何個人資料。</p>
+    <div class="cta-row">
+      <a class="btn" href="#tools" data-i18n="hero_cta_tools">開始使用工具</a>
+      <a class="btn ghost" href="https://vip712.github.io/aiee/" target="_blank" rel="noopener" data-i18n="hero_cta_news">CryptoPulse 加密新聞站</a>
+    </div>
+  </div>
+
+  <section id="market">
+    <h2 data-i18n="market_title">行情速覽</h2>
+    <p class="sec-desc" data-i18n="market_desc">主流幣種即時價格（美元）與 24 小時漲跌，資料來自 CoinGecko 公開 API。</p>
+    <div class="grid" id="market-grid"><div class="card"><p class="muted" data-i18n="loading">載入中…</p></div></div>
+    <div class="card" style="margin-top:1rem">
+      <h3 data-i18n="fng_title">恐懼貪婪指數</h3>
+      <div class="fng-meter"><div class="fng-marker" id="fng-marker" style="left:50%"></div></div>
+      <p class="muted"><span id="fng-value">–</span> · <span id="fng-label">–</span></p>
+    </div>
+  </section>
+
+  <section id="tools">
+    <h2 data-i18n="tools_title">工具箱</h2>
+    <p class="sec-desc" data-i18n="tools_desc">全部在瀏覽器內運作，無需註冊，重新整理頁面也不會上傳任何資料。</p>
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="converter" data-i18n="tab_converter">幣價換算</button>
+      <button class="tab-btn" data-tab="fees" data-i18n="tab_fees">手續費查詢</button>
+      <button class="tab-btn" data-tab="portfolio" data-i18n="tab_portfolio">投資組合追蹤</button>
+      <button class="tab-btn" data-tab="mining" data-i18n="tab_mining">挖礦收益估算</button>
+      <button class="tab-btn" data-tab="qr" data-i18n="tab_qr">錢包二維碼</button>
+    </div>
+
+    <div class="card tab-panel active" id="panel-converter">
+      <div class="field"><label data-i18n="amount">數量</label><input id="cv-amount" type="number" value="1" min="0" step="any"></div>
+      <div class="row2">
+        <div class="field"><label data-i18n="from">從</label><select id="cv-from"></select></div>
+        <div class="field"><label data-i18n="to">換成</label><select id="cv-to"></select></div>
+      </div>
+      <button class="btn small" id="cv-btn" data-i18n="convert">換算</button>
+      <div class="result" id="cv-result">–</div>
+    </div>
+
+    <div class="card tab-panel" id="panel-fees">
+      <h3>Bitcoin <span data-i18n="fee_btc">手續費（sat/vB）</span></h3>
+      <div class="grid" id="btc-fees" style="margin:.6rem 0"><div><p class="muted" data-i18n="loading">載入中…</p></div></div>
+      <h3 style="margin-top:1rem">Ethereum <span data-i18n="fee_eth">Gas 價格</span></h3>
+      <div class="result" id="eth-gas">–</div>
+      <p class="muted" style="margin-top:.6rem" data-i18n="fees_note">BTC 資料來自 mempool.space；ETH Gas 取自公開 RPC 節點，僅供參考，實際以錢包顯示為準。</p>
+    </div>
+
+    <div class="card tab-panel" id="panel-portfolio">
+      <div class="row2">
+        <div class="field"><label data-i18n="coin">幣種</label><select id="pf-coin"></select></div>
+        <div class="field"><label data-i18n="amount">數量</label><input id="pf-amount" type="number" min="0" step="any" placeholder="0.5"></div>
+      </div>
+      <button class="btn small" id="pf-add" data-i18n="add">新增</button>
+      <div style="overflow-x:auto;margin-top:.8rem">
+      <table><thead><tr>
+        <th data-i18n="coin">幣種</th><th data-i18n="amount">數量</th>
+        <th data-i18n="price_usd">價格 (USD)</th><th data-i18n="value_usd">價值 (USD)</th><th></th>
+      </tr></thead><tbody id="pf-rows"></tbody></table>
+      </div>
+      <div class="result"><span data-i18n="total_value">總價值</span>：<b id="pf-total">$0</b></div>
+      <p class="muted" data-i18n="pf_note">持倉只保存在這台裝置的瀏覽器裡（localStorage），本站不會看到也不會上傳。</p>
+    </div>
+
+    <div class="card tab-panel" id="panel-mining">
+      <div class="field"><label data-i18n="hashrate">你的算力 (TH/s)</label><input id="mn-hash" type="number" min="0" step="any" value="100"></div>
+      <div class="field"><label data-i18n="network_hashrate">全網算力 (EH/s)</label>
+        <div style="display:flex;gap:.6rem"><input id="mn-net" type="number" min="0" step="any" placeholder="–">
+        <button class="btn small" id="mn-fetch" data-i18n="fetch_latest" style="white-space:nowrap">取得最新</button></div>
+      </div>
+      <button class="btn small" id="mn-calc" data-i18n="calculate">估算</button>
+      <div class="result" id="mn-result">–</div>
+      <p class="muted" data-i18n="mn_note">公式：你的算力 ÷ 全網算力 × 144 區塊/天 × 3.125 BTC。以目前難度估算，未計電費與礦池手續費，僅供參考。</p>
+    </div>
+
+    <div class="card tab-panel" id="panel-qr">
+      <div class="field"><label data-i18n="wallet_address">錢包地址</label><input id="qr-input" data-i18n-ph="qr_placeholder" placeholder="貼上 BTC / ETH / USDT… 地址"></div>
+      <button class="btn small" id="qr-btn" data-i18n="generate_qr">產生二維碼</button>
+      <div class="qr-box" id="qr-box"><span class="muted" data-i18n="qr_hint">輸入地址後產生，方便手機錢包掃碼轉帳</span></div>
+      <p class="muted" data-i18n="qr_note">二維碼在瀏覽器本地產生，地址不會傳送到任何伺服器。轉帳前請務必核對地址與鏈類型。</p>
+    </div>
+  </section>
+
+  <section id="airdrops">
+    <h2 data-i18n="ad_title">空投機會</h2>
+    <p class="sec-desc" data-i18n="ad_desc">整理中的長期、可驗證的免費獲取加密貨幣的機會。名單會不定期更新，參與前請自行查證（DYOR）。</p>
+    <div class="warn"><b data-i18n="scam_title">防騙提醒：</b><span data-i18n="scam_body">任何向你要助記詞、私鑰的人都是騙子；只透過官方網域操作，仔細核對網址；新項目先小額測試；凡是要求你「先打錢才能領空投」的，100% 是詐騙。</span></div>
+    <div class="grid" id="ad-grid"></div>
+  </section>
+
+  <section id="referrals">
+    <h2 data-i18n="ref_title">交易所推薦返佣</h2>
+    <p class="sec-desc" data-i18n="ref_desc">透過以下連結註冊交易所，你可享手續費減免，本站也能獲得平台支付的返佣（由交易所支出，不增加你的成本）。感謝支持！</p>
+    <div class="grid" id="ref-grid"></div>
+    <p class="muted" style="margin-top:1rem" data-i18n="ref_note">返佣比例為各平台公開的最高級別，實際比例依帳號等級與當地政策而定，詳見各官網說明。</p>
+  </section>
+
+  <section id="donate">
+    <h2 data-i18n="dn_title">打賞支持</h2>
+    <p class="sec-desc" data-i18n="dn_desc">如果這些工具對你有幫助，歡迎用加密貨幣請我喝杯咖啡。所有打賞直接進入鏈上地址，不經第三方。</p>
+    <div class="grid" id="dn-grid"></div>
+    <p class="muted" style="margin-top:1rem" data-i18n="dn_note">打賞地址待站長確認後填入。轉帳前請再三核對地址與鏈類型，轉錯鏈資產可能永久遺失。</p>
+  </section>
+</main>
+<footer>
+  <p><b data-i18n="risk_title">風險提示：</b><span data-i18n="risk_body">本站內容僅供資訊參考，不構成投資建議。加密貨幣價格波動劇烈，參與前請評估自身風險承受能力。</span></p>
+  <p><span data-i18n="footer_links">友站連結：</span><a href="https://vip712.github.io/aiee/" target="_blank" rel="noopener">CryptoPulse 加密新聞站</a></p>
+  <p>© 2026 Aioo Crypto Hub · <span data-i18n="footer_static">純靜態頁面，你的資料只留在你的瀏覽器</span></p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const I18N = {
+"zh-Hant": {
+nav_tools:"工具箱",nav_airdrops:"空投機會",nav_referrals:"推薦返佣",nav_donate:"打賞",
+hero_desc:"免費加密貨幣工具箱：即時行情、幣價換算、手續費查詢、投資組合追蹤、挖礦收益估算、錢包二維碼產生器，外加空投機會整理與交易所推薦返佣。純前端運作，不收集任何個人資料。",
+hero_cta_tools:"開始使用工具",hero_cta_news:"CryptoPulse 加密新聞站",
+market_title:"行情速覽",market_desc:"主流幣種即時價格（美元）與 24 小時漲跌，資料來自 CoinGecko 公開 API。",
+loading:"載入中…",load_failed:"載入失敗，請稍後再試",fng_title:"恐懼貪婪指數",
+tools_title:"工具箱",tools_desc:"全部在瀏覽器內運作，無需註冊，重新整理頁面也不會上傳任何資料。",
+tab_converter:"幣價換算",tab_fees:"手續費查詢",tab_portfolio:"投資組合追蹤",tab_mining:"挖礦收益估算",tab_qr:"錢包二維碼",
+amount:"數量",from:"從",to:"換成",convert:"換算",
+fee_btc:"手續費（sat/vB）",fee_eth:"Gas 價格",
+fee_fastest:"快速（約10分鐘）",fee_standard:"標準（約30分鐘）",fee_economy:"經濟（約1小時）",
+fees_note:"BTC 資料來自 mempool.space；ETH Gas 取自公開 RPC 節點，僅供參考，實際以錢包顯示為準。",
+coin:"幣種",price_usd:"價格 (USD)",value_usd:"價值 (USD)",add:"新增",remove:"刪除",total_value:"總價值",
+pf_note:"持倉只保存在這台裝置的瀏覽器裡（localStorage），本站不會看到也不會上傳。",
+hashrate:"你的算力 (TH/s)",network_hashrate:"全網算力 (EH/s)",fetch_latest:"取得最新",calculate:"估算",
+mn_note:"公式：你的算力 ÷ 全網算力 × 144 區塊/天 × 3.125 BTC。以目前難度估算，未計電費與礦池手續費，僅供參考。",
+est_daily:"預計每日收益",
+wallet_address:"錢包地址",qr_placeholder:"貼上 BTC / ETH / USDT… 地址",generate_qr:"產生二維碼",
+qr_hint:"輸入地址後產生，方便手機錢包掃碼轉帳",
+qr_note:"二維碼在瀏覽器本地產生，地址不會傳送到任何伺服器。轉帳前請務必核對地址與鏈類型。",
+enter_address_first:"請先輸入錢包地址",
+ad_title:"空投機會",ad_desc:"整理中的長期、可驗證的免費獲取加密貨幣的機會。名單會不定期更新，參與前請自行查證（DYOR）。",
+scam_title:"防騙提醒：",scam_body:"任何向你要助記詞、私鑰的人都是騙子；只透過官方網域操作，仔細核對網址；新項目先小額測試；凡是要求你「先打錢才能領空投」的，100% 是詐騙。",
+ongoing:"長期項目",example:"範例",cost:"成本",free_cost:"免費（需投入時間）",official_link:"前往官方頁面 →",
+ref_title:"交易所推薦返佣",ref_desc:"透過以下連結註冊交易所，你可享手續費減免，本站也能獲得平台支付的返佣（由交易所支出，不增加你的成本）。感謝支持！",
+ref_note:"返佣比例為各平台公開的最高級別，實際比例依帳號等級與當地政策而定，詳見各官網說明。",
+refcode:"邀請碼",signup:"前往註冊",copy:"複製",copied:"已複製！",
+dn_title:"打賞支持",dn_desc:"如果這些工具對你有幫助，歡迎用加密貨幣請我喝杯咖啡。所有打賞直接進入鏈上地址，不經第三方。",
+dn_note:"打賞地址待站長確認後填入。轉帳前請再三核對地址與鏈類型，轉錯鏈資產可能永久遺失。",
+addr_pending:"地址待補充",
+risk_title:"風險提示：",risk_body:"本站內容僅供資訊參考，不構成投資建議。加密貨幣價格波動劇烈，參與前請評估自身風險承受能力。",
+footer_links:"友站連結：",footer_static:"純靜態頁面，你的資料只留在你的瀏覽器"
+},
+"en": {
+nav_tools:"Tools",nav_airdrops:"Airdrops",nav_referrals:"Referrals",nav_donate:"Donate",
+hero_desc:"Free crypto toolbox: live prices, converter, fee tracker, portfolio, mining estimator and wallet QR generator — plus curated airdrop opportunities and exchange referral links. Runs 100% in your browser; no data collected.",
+hero_cta_tools:"Start using the tools",hero_cta_news:"CryptoPulse News",
+market_title:"Market Snapshot",market_desc:"Live prices (USD) and 24h change for major coins, via the CoinGecko public API.",
+loading:"Loading…",load_failed:"Failed to load, please try again later",fng_title:"Fear & Greed Index",
+tools_title:"Toolbox",tools_desc:"Everything runs in your browser. No sign-up, nothing uploaded — even if you refresh.",
+tab_converter:"Converter",tab_fees:"Fee Tracker",tab_portfolio:"Portfolio",tab_mining:"Mining Estimator",tab_qr:"Wallet QR",
+amount:"Amount",from:"From",to:"To",convert:"Convert",
+fee_btc:"fees (sat/vB)",fee_eth:"Gas price",
+fee_fastest:"Fast (~10 min)",fee_standard:"Standard (~30 min)",fee_economy:"Economy (~1 hr)",
+fees_note:"BTC data from mempool.space; ETH gas from a public RPC node, indicative only — your wallet's quote is authoritative.",
+coin:"Coin",price_usd:"Price (USD)",value_usd:"Value (USD)",add:"Add",remove:"Remove",total_value:"Total value",
+pf_note:"Holdings are stored only in this device's browser (localStorage). This site never sees or uploads them.",
+hashrate:"Your hashrate (TH/s)",network_hashrate:"Network hashrate (EH/s)",fetch_latest:"Fetch latest",calculate:"Estimate",
+mn_note:"Formula: your hashrate ÷ network hashrate × 144 blocks/day × 3.125 BTC. Based on current difficulty; excludes electricity and pool fees. Indicative only.",
+est_daily:"Est. daily earnings",
+wallet_address:"Wallet address",qr_placeholder:"Paste a BTC / ETH / USDT… address",generate_qr:"Generate QR",
+qr_hint:"Enter an address to generate a QR code for easy mobile-wallet scanning",
+qr_note:"The QR code is generated locally in your browser; the address is never sent anywhere. Always double-check the address and network before sending.",
+enter_address_first:"Please enter a wallet address first",
+ad_title:"Airdrop Opportunities",ad_desc:"A curated list of long-running, verifiable ways to earn crypto for free. Updated periodically — always do your own research (DYOR).",
+scam_title:"Anti-scam reminder:",scam_body:"Anyone asking for your seed phrase or private key is a scammer. Only use official domains and double-check URLs; test new projects with small amounts; anyone demanding payment \u201cto claim an airdrop\u201d is 100% a scam.",
+ongoing:"Ongoing",example:"Example",cost:"Cost",free_cost:"Free (time investment)",official_link:"Visit official page →",
+ref_title:"Exchange Referral Rewards",ref_desc:"Sign up through these links to get fee discounts — the exchange also pays this site a commission (covered by the exchange, at no extra cost to you). Thanks for the support!",
+ref_note:"Rates shown are each platform's published maximum; actual rates depend on account tier and local policy. See each official site for details.",
+refcode:"Referral code",signup:"Sign up",copy:"Copy",copied:"Copied!",
+dn_title:"Donate",dn_desc:"If these tools helped you, consider buying me a coffee in crypto. All donations go directly to on-chain addresses, no middlemen.",
+dn_note:"Donation addresses will be added once confirmed by the site owner. Always double-check the address and network — sending to the wrong chain can mean permanent loss.",
+addr_pending:"Address coming soon",
+risk_title:"Risk disclaimer:",risk_body:"Content on this site is for information only and is not investment advice. Crypto prices are highly volatile — assess your own risk tolerance before participating.",
+footer_links:"Friendly links:",footer_static:"Pure static page — your data stays in your browser"
+}};
+
+let lang = localStorage.getItem('aioo_lang') || 'zh-Hant';
+if(!I18N[lang]) lang = 'zh-Hant';
+function t(k){ return (I18N[lang] && I18N[lang][k]) || I18N['zh-Hant'][k] || k; }
+function L(obj){ return obj[lang] || obj['zh-Hant']; }
+
+const AIRDROPS = [
+ {badge:"live", type:{ "zh-Hant":"長期項目", "en":"Ongoing" },
+  name:"Binance Launchpool",
+  desc:{ "zh-Hant":"質押 BNB、FDUSD 等資產，免費挖取新上線代幣。歷史回報不錯，風險低，適合長持用戶。","en":"Stake BNB, FDUSD and more to farm newly listed tokens for free. Historically decent returns, low risk — ideal for long-term holders."},
+  cost:{ "zh-Hant":"需持有 BNB / FDUSD 等","en":"Requires BNB / FDUSD holdings"},
+  url:"https://www.binance.com/zh-CN/launchpool"},
+ {badge:"live", type:{ "zh-Hant":"長期項目", "en":"Ongoing" },
+  name:"OKX Jumpstart",
+  desc:{ "zh-Hant":"質押 BTC、ETH 等主流幣，免費挖新幣。規則透明，適合已有持倉的用戶。","en":"Stake BTC, ETH and other majors to mine new tokens for free. Transparent rules — great if you already hold."},
+  cost:{ "zh-Hant":"需持有 BTC / ETH 等","en":"Requires BTC / ETH holdings"},
+  url:"https://www.okx.com/zh-hans/jumpstart"},
+ {badge:"demo", type:{ "zh-Hant":"範例", "en":"Example" },
+  name:{ "zh-Hant":"待補充：測試網互動空投","en":"TBD: Testnet interaction airdrops"},
+  desc:{ "zh-Hant":"參與新公鏈測試網互動，未來可能獲得空投。以實際項目公告為準。","en":"Interact with new chain testnets for potential future airdrops. Follow actual project announcements."},
+  cost:{ "zh-Hant":"免費（需投入時間）","en":"Free (time investment)"},
+  url:"#"},
+ {badge:"demo", type:{ "zh-Hant":"範例", "en":"Example" },
+  name:{ "zh-Hant":"待補充：交易所新幣活動","en":"TBD: Exchange new-listing campaigns"},
+  desc:{ "zh-Hant":"各交易所不定期舉辦交易賽、新幣申購等活動，獎勵以官方公告為準。","en":"Exchanges run trading competitions and new-token subscriptions from time to time — check official announcements."},
+  cost:{ "zh-Hant":"免費（需投入時間）","en":"Free (time investment)"},
+  url:"#"}
+];
+
+const REFS = [
+ {name:"Binance 幣安", code:"392708322",
+  url:"https://account.binance.com/register?registerChannel=user_center&ref=392708322",
+  rate:{ "zh-Hant":"現貨返佣最高 50%","en":"Up to 50% spot commission"},
+  desc:{ "zh-Hant":"全球交易量最大的交易所，幣種最全，流動性最好。","en":"Largest exchange by volume, deepest liquidity, widest coin selection."}},
+ {name:"OKX 歐易", code:"PFVFLPPF",
+  url:"https://www.mitnpkwxvfr.net/join/PFVFLPPF",
+  rate:{ "zh-Hant":"返佣最高 50%","en":"Up to 50% commission"},
+  desc:{ "zh-Hant":"產品線齊全，Web3 錢包體驗佳，適合進階用戶。","en":"Full product suite with a great Web3 wallet. Good for advanced users."}},
+ {name:"Bitfinex", code:"TNGv8_p9T",
+  url:"https://www.bitfinex.com/sign-up?refcode=TNGv8_p9T",
+  rate:{ "zh-Hant":"返佣比例見官網","en":"See official site for rates"},
+  desc:{ "zh-Hant":"老牌交易所，深度好，適合大額現貨與保證金交易者。","en":"Veteran exchange with deep order books — good for large spot/margin traders."}}
+];
+
+const DONATIONS = [
+ {name:"Bitcoin (BTC)", addr:""},
+ {name:"Ethereum (ETH)", addr:""},
+ {name:"USDT (ERC20)", addr:""},
+ {name:"USDT (TRC20)", addr:""},
+ {name:"Solana (SOL)", addr:""},
+ {name:"Monero (XMR)", addr:""}
+];
+
+const COINS = [
+ {id:"bitcoin", sym:"BTC", name:"Bitcoin"},
+ {id:"ethereum", sym:"ETH", name:"Ethereum"},
+ {id:"solana", sym:"SOL", name:"Solana"},
+ {id:"binancecoin", sym:"BNB", name:"BNB"}
+];
+const FIATS = ["USD","TWD","HKD","CNY","JPY"];
+const CRYPTO_IDS = {BTC:"bitcoin",ETH:"ethereum",SOL:"solana",BNB:"binancecoin",USDT:"tether"};
+let prices = {}, cvRates = null;
+
+function renderAirdrops(){
+  document.getElementById('ad-grid').innerHTML = AIRDROPS.map(a=>{
+    const nm = typeof a.name === 'string' ? a.name : L(a.name);
+    const link = a.url && a.url !== '#' ? '<p style="margin-top:.6rem"><a href="'+a.url+'" target="_blank" rel="noopener">'+t('official_link')+'</a></p>' : '';
+    return '<div class="card"><span class="badge '+a.badge+'">'+L(a.type)+'</span><h3>'+nm+'</h3><p>'+L(a.desc)+'</p><p class="muted" style="margin-top:.5rem">'+t('cost')+'：'+L(a.cost)+'</p>'+link+'</div>';
+  }).join('');
+}
+function renderReferrals(){
+  document.getElementById('ref-grid').innerHTML = REFS.map(r=>
+    '<div class="card"><h3>'+r.name+'</h3><p>'+L(r.desc)+'</p>'+
+    '<p class="muted" style="margin-top:.4rem">💰 '+L(r.rate)+'</p>'+
+    '<div class="ref-code"><span class="muted" style="font-size:.8rem">'+t('refcode')+'</span><code>'+r.code+'</code>'+
+    '<button class="copy-btn" data-copy="'+r.code+'">'+t('copy')+'</button></div>'+
+    '<a class="btn small" href="'+r.url+'" target="_blank" rel="noopener">'+t('signup')+'</a></div>'
+  ).join('');
+}
+function renderDonate(){
+  document.getElementById('dn-grid').innerHTML = DONATIONS.map(d=>{
+    const body = d.addr
+      ? '<div class="addr">'+d.addr+'</div><button class="copy-btn" data-copy="'+d.addr+'">'+t('copy')+'</button>'
+      : '<div class="addr">'+t('addr_pending')+'</div>';
+    return '<div class="card"><h3>'+d.name+'</h3>'+body+'</div>';
+  }).join('');
+}
+function renderMarket(){
+  const g = document.getElementById('market-grid');
+  if(!Object.keys(prices).length){ g.innerHTML = '<div class="card"><p class="muted">'+t('loading')+'</p></div>'; return; }
+  g.innerHTML = COINS.map(c=>{
+    const p = prices[c.id]; if(!p) return '';
+    const cls = p.chg >= 0 ? 'up' : 'down';
+    const sign = p.chg >= 0 ? '+' : '';
+    return '<div class="card"><p class="muted">'+c.name+' ('+c.sym+')</p>'+
+      '<p class="price">$'+p.usd.toLocaleString('en-US',{maximumFractionDigits:2})+'</p>'+
+      '<p class="'+cls+'">'+sign+p.chg.toFixed(2)+'% (24h)</p></div>';
+  }).join('');
+}
+
+function applyI18n(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPh); });
+  document.querySelectorAll('.lang-toggle button').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
+  renderAirdrops(); renderReferrals(); renderDonate(); renderMarket();
+  renderPf(); renderFeesText();
+}
+document.querySelectorAll('.lang-toggle button').forEach(b=>{
+  b.addEventListener('click', ()=>{ lang = b.dataset.lang; localStorage.setItem('aioo_lang', lang); applyI18n(); });
+});
+
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById('panel-'+b.dataset.tab).classList.add('active');
+  });
+});
+
+document.addEventListener('click', e=>{
+  const b = e.target.closest('.copy-btn'); if(!b) return;
+  const done = ()=>{ const o=b.textContent; b.textContent=t('copied'); setTimeout(()=>b.textContent=o,1200); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(b.dataset.copy).then(done).catch(done);
+  } else {
+    const ta=document.createElement('textarea'); ta.value=b.dataset.copy; document.body.appendChild(ta);
+    ta.select(); try{document.execCommand('copy');}catch(_){} ta.remove(); done();
+  }
+});
+
+async function loadMarket(){
+  try{
+    const r = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,binancecoin,tether&price_change_percentage=24h');
+    const d = await r.json();
+    d.forEach(c=>{ prices[c.id]={usd:c.current_price, chg:c.price_change_percentage_24h}; });
+    renderMarket(); renderPf();
+  }catch(e){ document.getElementById('market-grid').innerHTML='<div class="card"><p class="muted">'+t('load_failed')+'</p></div>'; }
+}
+async function loadFng(){
+  try{
+    const r = await fetch('https://api.alternative.me/fng/?limit=1');
+    const d = await r.json(); const v = d.data[0];
+    document.getElementById('fng-value').textContent = v.value+' / 100';
+    document.getElementById('fng-label').textContent = v.value_classification;
+    document.getElementById('fng-marker').style.left = v.value+'%';
+  }catch(e){}
+}
+
+let feesLoaded = false;
+function renderFeesText(){ if(!feesLoaded) return; }
+async function loadFees(){
+  try{
+    const r = await fetch('https://mempool.space/api/v1/fees/recommended');
+    const f = await r.json();
+    document.getElementById('btc-fees').innerHTML = [
+      [t('fee_fastest'), f.fastestFee],[t('fee_standard'), f.halfHourFee],[t('fee_economy'), f.hourFee]
+    ].map(x=>'<div class="card" style="padding:.8rem"><p class="muted">'+x[0]+'</p><p class="price">'+x[1]+' <small style="font-size:.8rem">sat/vB</small></p></div>').join('');
+  }catch(e){ document.getElementById('btc-fees').innerHTML='<div><p class="muted">'+t('load_failed')+'</p></div>'; }
+  try{
+    const r = await fetch('https://ethereum.publicnode.com',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_gasPrice',params:[]})});
+    const d = await r.json();
+    const gwei = parseInt(d.result,16)/1e9;
+    document.getElementById('eth-gas').innerHTML = '<b>'+gwei.toFixed(1)+' Gwei</b>';
+  }catch(e){ document.getElementById('eth-gas').textContent = t('load_failed'); }
+  feesLoaded = true;
+}
+
+function buildCoinSelects(){
+  const syms = Object.keys(CRYPTO_IDS).concat(FIATS);
+  const opts = syms.map(s=>'<option value="'+s+'">'+s+'</option>').join('');
+  document.getElementById('cv-from').innerHTML = opts;
+  document.getElementById('cv-to').innerHTML = opts;
+  document.getElementById('cv-from').value = 'BTC';
+  document.getElementById('cv-to').value = 'USD';
+  document.getElementById('pf-coin').innerHTML = COINS.map(c=>'<option value="'+c.id+'">'+c.sym+' - '+c.name+'</option>').join('');
+}
+async function ensureCvRates(){
+  if(cvRates) return true;
+  try{
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin,tether&vs_currencies=usd,twd,hkd,cny,jpy');
+    cvRates = await r.json(); return true;
+  }catch(e){ return false; }
+}
+function usdPerUnit(sym){
+  if(sym==='USD') return 1;
+  if(CRYPTO_IDS[sym]) return cvRates[CRYPTO_IDS[sym]].usd;
+  return 1 / cvRates['tether'][sym.toLowerCase()];
+}
+document.getElementById('cv-btn').addEventListener('click', async ()=>{
+  const amt = parseFloat(document.getElementById('cv-amount').value);
+  const box = document.getElementById('cv-result');
+  if(!(amt>0)){ box.textContent = t('load_failed'); return; }
+  box.textContent = t('loading');
+  if(!await ensureCvRates()){ box.textContent = t('load_failed'); return; }
+  try{
+    const from = document.getElementById('cv-from').value, to = document.getElementById('cv-to').value;
+    const usdVal = amt * usdPerUnit(from);
+    const out = usdVal / usdPerUnit(to);
+    box.innerHTML = amt+' '+from+' ≈ <b>'+out.toLocaleString('en-US',{maximumFractionDigits: out<1?6:2})+' '+to+'</b>';
+  }catch(e){ box.textContent = t('load_failed'); }
+});
+
+let pf = [];
+try{ pf = JSON.parse(localStorage.getItem('aioo_pf')||'[]'); }catch(e){ pf=[]; }
+function renderPf(){
+  const tb = document.getElementById('pf-rows');
+  let total = 0;
+  tb.innerHTML = pf.map((h,i)=>{
+    const c = COINS.find(x=>x.id===h.id); const p = prices[h.id];
+    const val = p ? h.amount*p.usd : 0; total += val;
+    return '<tr><td>'+(c?c.sym:h.id)+'</td><td>'+h.amount+'</td><td>'+(p?'$'+p.usd.toLocaleString('en-US',{maximumFractionDigits:2}):'–')+'</td><td>'+(p?'$'+val.toLocaleString('en-US',{maximumFractionDigits:2}):'–')+'</td>'+
+      '<td><button class="copy-btn" data-pf-del="'+i+'">'+t('remove')+'</button></td></tr>';
+  }).join('') || '<tr><td colspan="5" class="muted">–</td></tr>';
+  document.getElementById('pf-total').textContent = '$'+total.toLocaleString('en-US',{maximumFractionDigits:2});
+}
+document.getElementById('pf-add').addEventListener('click', ()=>{
+  const id = document.getElementById('pf-coin').value;
+  const amt = parseFloat(document.getElementById('pf-amount').value);
+  if(!(amt>0)) return;
+  pf.push({id, amount:amt});
+  localStorage.setItem('aioo_pf', JSON.stringify(pf));
+  document.getElementById('pf-amount').value='';
+  renderPf();
+});
+document.addEventListener('click', e=>{
+  const b = e.target.closest('[data-pf-del]'); if(!b) return;
+  pf.splice(parseInt(b.dataset.pfDel,10),1);
+  localStorage.setItem('aioo_pf', JSON.stringify(pf)); renderPf();
+});
+
+document.getElementById('mn-fetch').addEventListener('click', async ()=>{
+  const btn = document.getElementById('mn-fetch'); btn.textContent = t('loading');
+  try{
+    const r = await fetch('https://mempool.space/api/v1/mining/hashrate/3d');
+    const d = await r.json();
+    const last = d.hashrates[d.hashrates.length-1];
+    document.getElementById('mn-net').value = (last.avgHashrate/1e18).toFixed(1);
+  }catch(e){}
+  btn.textContent = t('fetch_latest');
+});
+document.getElementById('mn-calc').addEventListener('click', ()=>{
+  const th = parseFloat(document.getElementById('mn-hash').value);
+  const eh = parseFloat(document.getElementById('mn-net').value);
+  const box = document.getElementById('mn-result');
+  if(!(th>0) || !(eh>0)){ box.textContent = t('load_failed'); return; }
+  const btcDay = (th*1e12)/(eh*1e18)*144*3.125;
+  const usd = prices.bitcoin ? btcDay*prices.bitcoin.usd : null;
+  box.innerHTML = t('est_daily')+'：<b>'+btcDay.toFixed(6)+' BTC</b>'+(usd!==null?' ≈ <b>$'+usd.toLocaleString('en-US',{maximumFractionDigits:2})+'</b>':'');
+});
+
+document.getElementById('qr-btn').addEventListener('click', ()=>{
+  const addr = document.getElementById('qr-input').value.trim();
+  const box = document.getElementById('qr-box');
+  if(!addr){ box.innerHTML = '<span class="muted">'+t('enter_address_first')+'</span>'; return; }
+  box.innerHTML = '';
+  if(typeof QRCode === 'undefined'){ box.innerHTML = '<span class="muted">'+t('load_failed')+'</span>'; return; }
+  new QRCode(box, {text:addr, width:180, height:180, correctLevel:QRCode.CorrectLevel.M});
+});
+
+buildCoinSelects();
+applyI18n();
+loadMarket(); loadFng(); loadFees();
+</script>
 </body>
 </html>
