@@ -205,7 +205,6 @@ footer p{margin-bottom:.5rem}
   <p><span data-i18n="footer_links">友站連結：</span><a href="https://vip712.github.io/aiee/" target="_blank" rel="noopener">CryptoPulse 加密新聞站</a></p>
   <p>© 2026 Aioo Crypto Hub · <span data-i18n="footer_static">純靜態頁面，你的資料只留在你的瀏覽器</span></p>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const I18N = {
 "zh-Hant": {
@@ -335,6 +334,52 @@ const FIATS = ["USD","TWD","HKD","CNY","JPY"];
 const CRYPTO_IDS = {BTC:"bitcoin",ETH:"ethereum",SOL:"solana",BNB:"binancecoin",USDT:"tether"};
 let prices = {}, cvRates = null;
 
+/* fetch with timeout: never hang forever on a blocked/slow host */
+async function fetchJSON(url, opts, timeoutMs){
+  opts = opts || {}; timeoutMs = timeoutMs || 10000;
+  const c = new AbortController();
+  const id = setTimeout(function(){ c.abort(); }, timeoutMs);
+  try{
+    const r = await fetch(url, Object.assign({}, opts, {signal:c.signal}));
+    if(!r.ok) throw new Error('http '+r.status);
+    return await r.json();
+  } finally { clearTimeout(id); }
+}
+/* ETH gas: try several public RPCs, first success wins */
+const ETH_RPCS = [
+  'https://ethereum.publicnode.com',
+  'https://ethereum-rpc.publicnode.com',
+  'https://rpc.builder0x69.io',
+  'https://eth.llamarpc.com'
+];
+async function fetchEthGasGwei(){
+  const body = JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_gasPrice',params:[]});
+  for(const rpc of ETH_RPCS){
+    try{
+      const d = await fetchJSON(rpc, {method:'POST',headers:{'content-type':'application/json'},body:body}, 8000);
+      if(d && d.result) return parseInt(d.result,16)/1e9;
+    }catch(e){}
+  }
+  throw new Error('eth gas unavailable');
+}
+/* QR lib: lazy-load with CDN fallbacks so a blocked CDN never stalls the page */
+function loadQRLib(){
+  return new Promise(function(res){
+    if(typeof QRCode !== 'undefined') return res(true);
+    const urls = [
+      'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
+      'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js',
+      'https://unpkg.com/qrcodejs@1.0.0/qrcode.min.js'
+    ];
+    (function next(i){
+      if(i >= urls.length) return res(false);
+      const s = document.createElement('script'); s.src = urls[i];
+      s.onload = function(){ res(true); }; s.onerror = function(){ next(i+1); };
+      document.head.appendChild(s);
+    })(0);
+  });
+}
+
 function renderAirdrops(){
   document.getElementById('ad-grid').innerHTML = AIRDROPS.map(a=>{
     const nm = typeof a.name === 'string' ? a.name : L(a.name);
@@ -406,16 +451,15 @@ document.addEventListener('click', e=>{
 
 async function loadMarket(){
   try{
-    const r = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,binancecoin,tether&price_change_percentage=24h');
-    const d = await r.json();
+    const d = await fetchJSON('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,binancecoin,tether&price_change_percentage=24h');
     d.forEach(c=>{ prices[c.id]={usd:c.current_price, chg:c.price_change_percentage_24h}; });
     renderMarket(); renderPf();
   }catch(e){ document.getElementById('market-grid').innerHTML='<div class="card"><p class="muted">'+t('load_failed')+'</p></div>'; }
 }
 async function loadFng(){
   try{
-    const r = await fetch('https://api.alternative.me/fng/?limit=1');
-    const d = await r.json(); const v = d.data[0];
+    const d = await fetchJSON('https://api.alternative.me/fng/?limit=1');
+    const v = d.data[0];
     document.getElementById('fng-value').textContent = v.value+' / 100';
     document.getElementById('fng-label').textContent = v.value_classification;
     document.getElementById('fng-marker').style.left = v.value+'%';
@@ -426,17 +470,13 @@ let feesLoaded = false;
 function renderFeesText(){ if(!feesLoaded) return; }
 async function loadFees(){
   try{
-    const r = await fetch('https://mempool.space/api/v1/fees/recommended');
-    const f = await r.json();
+    const f = await fetchJSON('https://mempool.space/api/v1/fees/recommended');
     document.getElementById('btc-fees').innerHTML = [
       [t('fee_fastest'), f.fastestFee],[t('fee_standard'), f.halfHourFee],[t('fee_economy'), f.hourFee]
     ].map(x=>'<div class="card" style="padding:.8rem"><p class="muted">'+x[0]+'</p><p class="price">'+x[1]+' <small style="font-size:.8rem">sat/vB</small></p></div>').join('');
   }catch(e){ document.getElementById('btc-fees').innerHTML='<div><p class="muted">'+t('load_failed')+'</p></div>'; }
   try{
-    const r = await fetch('https://ethereum.publicnode.com',{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_gasPrice',params:[]})});
-    const d = await r.json();
-    const gwei = parseInt(d.result,16)/1e9;
+    const gwei = await fetchEthGasGwei();
     document.getElementById('eth-gas').innerHTML = '<b>'+gwei.toFixed(1)+' Gwei</b>';
   }catch(e){ document.getElementById('eth-gas').textContent = t('load_failed'); }
   feesLoaded = true;
@@ -454,8 +494,8 @@ function buildCoinSelects(){
 async function ensureCvRates(){
   if(cvRates) return true;
   try{
-    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin,tether&vs_currencies=usd,twd,hkd,cny,jpy');
-    cvRates = await r.json(); return true;
+    cvRates = await fetchJSON('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin,tether&vs_currencies=usd,twd,hkd,cny,jpy');
+    return true;
   }catch(e){ return false; }
 }
 function usdPerUnit(sym){
@@ -508,12 +548,14 @@ document.addEventListener('click', e=>{
 document.getElementById('mn-fetch').addEventListener('click', async ()=>{
   const btn = document.getElementById('mn-fetch'); btn.textContent = t('loading');
   try{
-    const r = await fetch('https://mempool.space/api/v1/mining/hashrate/3d');
-    const d = await r.json();
+    const d = await fetchJSON('https://mempool.space/api/v1/mining/hashrate/3d');
     const last = d.hashrates[d.hashrates.length-1];
     document.getElementById('mn-net').value = (last.avgHashrate/1e18).toFixed(1);
-  }catch(e){}
-  btn.textContent = t('fetch_latest');
+    btn.textContent = t('fetch_latest');
+  }catch(e){
+    btn.textContent = t('load_failed');
+    setTimeout(function(){ btn.textContent = t('fetch_latest'); }, 1500);
+  }
 });
 document.getElementById('mn-calc').addEventListener('click', ()=>{
   const th = parseFloat(document.getElementById('mn-hash').value);
@@ -525,12 +567,14 @@ document.getElementById('mn-calc').addEventListener('click', ()=>{
   box.innerHTML = t('est_daily')+'：<b>'+btcDay.toFixed(6)+' BTC</b>'+(usd!==null?' ≈ <b>$'+usd.toLocaleString('en-US',{maximumFractionDigits:2})+'</b>':'');
 });
 
-document.getElementById('qr-btn').addEventListener('click', ()=>{
+document.getElementById('qr-btn').addEventListener('click', async ()=>{
   const addr = document.getElementById('qr-input').value.trim();
   const box = document.getElementById('qr-box');
   if(!addr){ box.innerHTML = '<span class="muted">'+t('enter_address_first')+'</span>'; return; }
+  box.innerHTML = '<span class="muted">'+t('loading')+'</span>';
+  const ok = await loadQRLib();
+  if(!ok){ box.innerHTML = '<span class="muted">'+t('load_failed')+'</span>'; return; }
   box.innerHTML = '';
-  if(typeof QRCode === 'undefined'){ box.innerHTML = '<span class="muted">'+t('load_failed')+'</span>'; return; }
   new QRCode(box, {text:addr, width:180, height:180, correctLevel:QRCode.CorrectLevel.M});
 });
 
