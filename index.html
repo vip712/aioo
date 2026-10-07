@@ -345,6 +345,25 @@ async function fetchJSON(url, opts, timeoutMs){
     return await r.json();
   } finally { clearTimeout(id); }
 }
+/* BTC fees: blockstream esplora first (fast), mempool.space as fallback */
+async function fetchBtcFees(){
+  try{
+    const e = await fetchJSON('https://blockstream.info/api/fee-estimates', null, 8000);
+    const pick = function(k){ return Math.max(1, Math.ceil(e[String(k)] || 1)); };
+    return {fastestFee: pick(1), halfHourFee: pick(3), hourFee: pick(6)};
+  }catch(a){}
+  return await fetchJSON('https://mempool.space/api/v1/fees/recommended', null, 8000);
+}
+/* network hashrate (EH/s): blockchain.info first (fast), mempool.space as fallback */
+async function fetchNetworkEH(){
+  try{
+    const s = await fetchJSON('https://api.blockchain.info/stats', null, 8000);
+    if(s && s.hash_rate) return s.hash_rate/1e9;
+  }catch(a){}
+  const d = await fetchJSON('https://mempool.space/api/v1/mining/hashrate/3d', null, 8000);
+  const last = d.hashrates[d.hashrates.length-1];
+  return last.avgHashrate/1e18;
+}
 /* ETH gas: try several public RPCs, first success wins */
 const ETH_RPCS = [
   'https://ethereum.publicnode.com',
@@ -470,7 +489,7 @@ let feesLoaded = false;
 function renderFeesText(){ if(!feesLoaded) return; }
 async function loadFees(){
   try{
-    const f = await fetchJSON('https://mempool.space/api/v1/fees/recommended');
+    const f = await fetchBtcFees();
     document.getElementById('btc-fees').innerHTML = [
       [t('fee_fastest'), f.fastestFee],[t('fee_standard'), f.halfHourFee],[t('fee_economy'), f.hourFee]
     ].map(x=>'<div class="card" style="padding:.8rem"><p class="muted">'+x[0]+'</p><p class="price">'+x[1]+' <small style="font-size:.8rem">sat/vB</small></p></div>').join('');
@@ -548,9 +567,8 @@ document.addEventListener('click', e=>{
 document.getElementById('mn-fetch').addEventListener('click', async ()=>{
   const btn = document.getElementById('mn-fetch'); btn.textContent = t('loading');
   try{
-    const d = await fetchJSON('https://mempool.space/api/v1/mining/hashrate/3d');
-    const last = d.hashrates[d.hashrates.length-1];
-    document.getElementById('mn-net').value = (last.avgHashrate/1e18).toFixed(1);
+    const eh = await fetchNetworkEH();
+    document.getElementById('mn-net').value = eh.toFixed(1);
     btn.textContent = t('fetch_latest');
   }catch(e){
     btn.textContent = t('load_failed');
